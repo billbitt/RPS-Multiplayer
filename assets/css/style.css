@@ -1,16 +1,39 @@
 body {
     background-color: deepskyblue;
+    margin: 0px;
 }
 header {
     background-color: dodgerblue;
     color: white;
     text-align: center;
-    text-shadow: 2px 2px 2px black;
+    text-shadow: 2px 2px 2px dimgray;
+    box-shadow: 2px 2px 2px dimgrey;
 }
 
 .login-section, .gameplay-section, .chat-section {
     padding: 10px;
     text-align: center;
+}
+
+.gameplay-component {
+    width: 25%;
+    height: 300px;
+    border: 2px solid dodgerblue;
+}
+
+#player1-section {
+    display: inline-block;
+    margin: 0px 15px 0px 0px;
+}
+
+#game-status {
+    display: inline-block;
+    margin: 0px 15px 0px 15px;
+}
+
+#player2-section {
+    display: inline-block;
+    margin: 0px 0px 0px 15px;
 }
 
 h1 {
