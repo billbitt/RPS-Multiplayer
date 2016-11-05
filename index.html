@@ -6,9 +6,6 @@
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    <p>Number of connected users:</p>
-    <p id="connected-viewers"></p>
-
     <header>
         <h1>Rock Paper Scissors DEATHMATCH!</h1>
     </header>
@@ -28,7 +25,17 @@
         </div>
     </div>
     <div class="chat-section">
+        <div id="chat-display"></div>
+        <form id="chat-form">
+            <label id="chat-form-label" for="chat-form-input">Chat:</label>
+            <input id="chat-form-input" type="text">
+            <input id="chat-form-btn" type="submit" value="Save">
+        </form>
     </div>
+
+    <p>Number of connected users:</p>
+    <p id="connected-viewers"></p>
+
 
     <script src="https://www.gstatic.com/firebasejs/3.5.3/firebase.js"></script>
     <script>

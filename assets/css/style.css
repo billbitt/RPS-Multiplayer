@@ -1,6 +1,6 @@
 body {
     background-color: deepskyblue;
-    margin: 0px;
+    margin: 0px 0px 0px 0px;
 }
 header {
     background-color: dodgerblue;
@@ -8,6 +8,11 @@ header {
     text-align: center;
     text-shadow: 2px 2px 2px dimgray;
     box-shadow: 2px 2px 2px dimgrey;
+    padding: 20px 10px 20px 10px;
+}
+
+h1 {
+    
 }
 
 .login-section, .gameplay-section, .chat-section {
@@ -36,7 +41,17 @@ header {
     margin: 0px 0px 0px 15px;
 }
 
-h1 {
-    padding: 20px 10px 20px 10px;
+#chat-display {
+    display: inline-block;
+    width: 40%;
+    height: 200px;
+    background-color: white;
+    text-align: left;
+    overflow: auto;
+}
+
+.chat-text {
+    font-size: x-small;
+    line-height: 1;
 }
 
