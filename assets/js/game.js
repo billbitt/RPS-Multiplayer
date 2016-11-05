@@ -25,3 +25,11 @@ database.ref("/connections").on("value", function(snap) {
 	$("#connected-viewers").text(snap.numChildren());
 });
 
+
+//add "on click" function to the login form's button to submit player info
+$("#login-form-btn").on("click", function(){
+
+    //return false so it doesnt reload page
+    return false;
+})
+
