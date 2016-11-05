@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Multiplayer RPS</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <p>Number of connected users:</p>
+    <p id="connected-viewers"></p>
+
+    <header>
+        <h1>Rock Paper Scissors DEATHMATCH!</h1>
+    </header>
+
+    <script src="https://www.gstatic.com/firebasejs/3.5.3/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyCXAXjHFs4fl-rdC6zGFuiM8J5Tczeg9Ps",
+            authDomain: "rps-multiplayer-bafbd.firebaseapp.com",
+            databaseURL: "https://rps-multiplayer-bafbd.firebaseio.com",
+            storageBucket: "rps-multiplayer-bafbd.appspot.com",
+            messagingSenderId: "783130192296"
+        };
+        firebase.initializeApp(config);
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="assets/js/game.js"></script>
+
+</body>
+</html>
