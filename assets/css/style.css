@@ -11,10 +11,6 @@ header {
     padding: 20px 10px 20px 10px;
 }
 
-h1 {
-    
-}
-
 .login-section, .gameplay-section, .chat-section {
     padding: 10px;
     text-align: center;
@@ -27,7 +23,8 @@ h1 {
 }
 
 #player1-section {
-    display: inline-block;
+    float: left;
+    /*display: inline-block;*/
     margin: 0px 15px 0px 0px;
 }
 
@@ -37,9 +34,15 @@ h1 {
 }
 
 #player2-section {
-    display: inline-block;
+    float: right;
+    /*display: inline-block;*/
     margin: 0px 0px 0px 15px;
 }
+
+.game-choice {
+    vertical-align: middle;
+}
+
 
 #chat-display {
     display: inline-block;
@@ -53,5 +56,6 @@ h1 {
 .chat-text {
     font-size: x-small;
     line-height: 1;
+    vertical-align: bottom;
 }
 
