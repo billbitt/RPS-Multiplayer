@@ -39,6 +39,10 @@ header {
     margin: 0px 0px 0px 15px;
 }
 
+#player1-footer, #player2-footer {
+    vertical-align: bottom;
+}
+
 .game-choice {
     vertical-align: middle;
 }
