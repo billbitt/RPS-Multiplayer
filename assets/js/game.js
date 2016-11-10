@@ -124,26 +124,21 @@ database.ref("/players").on("child_removed", function(playerSnap){
     };
     
 });
-//if data in the players change, see if it is time to compare results
-database.ref("/players").on("child_changed", function(snap) {
-    console.log("child info changed");
-    //compare their selections
-    //if the selections are both valid, then compare them 
 
-}, function(errorObject){
-	alert("firebase encountered an error");
-});
 
-database.ref("/players").on("value", function(playersSnap) {   //note: this block used to be on.child_added
+database.ref("/players").on("value", function(playersSnap) {   //note: this block used to be on.child_added? 
     console.log("value change in '/players'");
 
-    //if both player's exist, check for choices and run game'
+    //if both player's exist, check for choices and run game'  //note: i am getting stuck in an infinite loop here b/c it updates the player then that triggers another go.  need to update after resetting choices.
     if ((player1exists === true) && (player2exists === true)){
         //if both players have made a choice, carry out the game logic
         if ((playersSnap.val().p1.choice != "none") && (playersSnap.val().p2.choice != "none")){
             //get the choices of p1 and p2
             var p1choice = playersSnap.val().p1.choice;
             var p2choice = playersSnap.val().p2.choice;
+            //reset their choices so this wont run again.
+            database.ref("/players/p1/choice").set("none");
+            database.ref("/players/p2/choice").set("none");
             //see who won & update the database with the results
             var result = "Tie";
             if (p1choice === "rock"){
