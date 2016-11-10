@@ -88,17 +88,21 @@ database.ref("/gameState").on("value", function(snap) {
     state = snap.val().gameState;
     console.log("GS: " + state);
     if (state === "need-players"){
-        //highlight the middle box
         $("#game-update").text("Waiting for all players to join.")
     } else if (state === "p1") {
-        //highlight player 1
         $("#game-update").text(player1name + "'s turn.")
+        //highlight player 1
+        $("#game-status").removeClass("highlight");
+        $("#player1-section").addClass("highlight");
     } else if (state === "p2") {
-        //highlight player 2
         $("#game-update").text(player2name + "'s turn.")
+        //highlight player 2
+        $("#player1-section").removeClass("highlight");
+        $("#player2-section").addClass("highlight");
     } else if (state === "show-result") {
         //highlight the middle box
-
+        $("#player2-section").removeClass("highlight");
+        $("#game-status").addClass("highlight");
     };
     //display the game state
     $("#game-state").text(state);
@@ -116,7 +120,7 @@ database.ref("/players").on("child_added", function(playerSnap){
         player1exists = true;
         console.log("player1exists: " + player1exists)
         //display the player's name and record
-        $("#player1-header").html("<p>" + playerSnap.val().playerName + "</p>");
+        $("#player1-header").html("<h3>" + playerSnap.val().playerName + "</h3>");
         $("#player1-footer").html("<p>Wins: " + playerSnap.val().wins + ", Losses: " + playerSnap.val().losses + "</p>")
         //store the player's name locally
         player1name = playerSnap.val().playerName;
@@ -127,7 +131,7 @@ database.ref("/players").on("child_added", function(playerSnap){
         player2exists = true;
         console.log("player2exists: " + player2exists)
        //display the player's name and record
-        $("#player2-header").html("<p>" + playerSnap.val().playerName + "</p>")
+        $("#player2-header").html("<h3>" + playerSnap.val().playerName + "</h3>")
         $("#player2-footer").html("<p>Wins: " + playerSnap.val().wins + ", Losses: " + playerSnap.val().losses + "</p>")
         //store the player's name locally
         player2name = playerSnap.val().playerName;
@@ -198,27 +202,27 @@ database.ref("/players").on("value", function(playersSnap) {   //note: this bloc
                 } else if (p2choice === "paper"){
                     database.ref("/players/p1/losses").set(playersSnap.val().p1.losses + 1);
                     database.ref("/players/p2/wins").set(playersSnap.val().p2.wins + 1);
-                    result = player2name + "Wins!";
+                    result = player2name + " Wins!";
                 };
             } else if (p1choice === "paper"){
                 if (p2choice === "rock"){
                     database.ref("/players/p1/wins").set(playersSnap.val().p1.wins + 1);
                     database.ref("/players/p2/losses").set(playersSnap.val().p2.losses + 1);
-                    result = player1name + "Wins!";
+                    result = player1name + " Wins!";
                 } else if (p2choice === "scissors"){
                     database.ref("/players/p1/losses").set(playersSnap.val().p1.losses + 1);
                     database.ref("/players/p2/wins").set(playersSnap.val().p2.wins + 1);
-                    result = player2name + "Wins!";
+                    result = player2name + " Wins!";
                 };
             } else if (p1choice === "scissors"){
                 if (p2choice === "paper"){
                     database.ref("/players/p1/wins").set(playersSnap.val().p1.wins + 1);
                     database.ref("/players/p2/losses").set(playersSnap.val().p2.losses + 1);
-                    result = player1name + "Wins!";
+                    result = player1name + " Wins!";
                 } else if (p2choice === "rock"){
                     database.ref("/players/p1/losses").set(playersSnap.val().p1.losses + 1);
                     database.ref("/players/p2/wins").set(playersSnap.val().p2.wins + 1);
-                    result = player2name + "Wins!";
+                    result = player2name + " Wins!";
                 };
             };
             //display result locally
@@ -311,7 +315,7 @@ $(document).on("click", ".game-choice", function(){
         if (state === "p1"){
             database.ref("/gameState").set({gameState: "p2"});
         } else {
-            database.ref("/gameState").set({gameState: "show-results"});
+            database.ref("/gameState").set({gameState: "show-result"});
         }
     }
     return false;

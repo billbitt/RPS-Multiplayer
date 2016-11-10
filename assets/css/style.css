@@ -20,6 +20,7 @@ header {
     width: 25%;
     height: 300px;
     border: 2px solid dodgerblue;
+    box-shadow: 2px 2px 2px dimgrey;
 }
 
 #player1-section {
@@ -45,11 +46,16 @@ header {
 }
 
 #player1-footer, #player2-footer {
-    vertical-align: bottom;
+    
 }
 
 .game-choice {
-    vertical-align: middle;
+    
+}
+
+.highlight {
+    border: 2px solid yellow;
+    box-shadow: 2px 2px 2px yellow;
 }
 
 
