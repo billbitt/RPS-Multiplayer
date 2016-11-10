@@ -104,8 +104,6 @@ database.ref("/gameState").on("value", function(snap) {
         $("#player2-section").removeClass("highlight");
         $("#game-status").addClass("highlight");
     };
-    //display the game state
-    $("#game-state").text(state);
    
 }, function(errorObject){
 	alert("firebase encountered an error");
@@ -170,9 +168,13 @@ database.ref("/players").on("child_removed", function(playerSnap){
         player2name = "";
     }; 
     
-    //as long as you are not already connected..show the login form
+    //as long as you are not already connected..show the login form and remove banner
     if((playerId != "p1") && (playerId != "p2")){
+        //show login
         $("#login-form").show();
+        //empty welcome banner
+        $("#welcome-banner").empty();
+        //change game state
         database.ref("/gameState").update({gameState: "need-players"});
     };
     
@@ -226,9 +228,13 @@ database.ref("/players").on("value", function(playersSnap) {   //note: this bloc
                 };
             };
             //display result locally
-            $("#game-update").text(result)
+            $("#game-update").text(result);
+            //update the display of the wins and losses
+            $("#player1-footer").text("TEST Wins: " + parseInt(playersSnap.val().p1.wins) + ", Losses: " + playersSnap.val().p1.losses);
+            $("#player2-footer").text("TEST Wins: " + playersSnap.val().p2.wins + ", Losses: " + playersSnap.val().p2.losses);
             //set a timer to execute the "nextRound" function 
-            setTimeout(startNextRound, 3000)
+            setTimeout(startNextRound, 3000);
+            
         };
     };
 
@@ -270,6 +276,8 @@ $("#login-form-btn").on("click", function(){
 
     //store the name locally
     playerName = $("#login-form-name").val().trim()
+    //set the top banner
+    $("#welcome-banner").html("<h3>Welcome " + playerName + "!</h3>");
     //create the player object  //NOTE: would be cool to pull history from cookies if they have logged in before.
     var newPlayerData = {
         losses: 0,
