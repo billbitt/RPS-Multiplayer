@@ -117,9 +117,12 @@ database.ref("/players").on("child_removed", function(playerSnap){
         player2exists = false;
     }; 
     
-    //no matter who disconnected, show the form and update the state
-    $("#login-form").show();
-    database.ref("/gameState").update({gameState: "need-players"});
+    //as long as you are not already connected..show the login form
+    if((playerId != "p1") && (playerId != "p2")){
+        $("#login-form").show();
+        database.ref("/gameState").update({gameState: "need-players"});
+    };
+    
 });
 //if data in the players change, see if it is time to compare results
 database.ref("/players").on("child_changed", function(snap) {
@@ -190,6 +193,9 @@ database.ref("/players").once("value", function(playersSnap){
     
 
 });
+
+
+
 
 //on initial load, get a snapshot.  also if any values change, get a snapshot.
 database.ref("/chatLog").on("child_added", function(childSnapshot){
