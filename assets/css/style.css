@@ -33,6 +33,11 @@ header {
     margin: 0px 15px 0px 15px;
 }
 
+#game-update {
+    display: inline-block;
+    margin: 0px 15px 0px 15px;
+}
+
 #player2-section {
     float: right;
     /*display: inline-block;*/

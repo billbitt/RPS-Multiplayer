@@ -12,19 +12,56 @@ var state;
 var playerChoice; //note: am i using this?
 var player1exists = false;
 var player2exists = false;
+var player1name;
+var player2name;
 
-// function playerExists(player){
-//     return database.ref("/players").once("value", function(playersSnap) {   //note: this block used to be on.child_added
-//         if(playersSnap.child(player).exists() === true){  
-//             return true;
-//         } else {
-//             return false;
-//         };
-//     });
-// };
-// console.log(player1exists = playerExists("p1"));
-// console.log(player2exists = playerExists("p2"));
 
+
+//this function will clear out the contents of the gameplay section for a new game
+function setUpGame(){
+    //fill in starter info
+    $("#player1-header").html("<h3>Waiting for Player 1</h3>");
+    $("#game-update").html("<h2>Waiting for players to log in</h2>");
+    $("#player2-header").html("<h3>Waiting for Player 2</h3>");
+    //clear the player choice areas
+    $("#player1-body").empty();
+    $("#player2-body").empty();
+    //set initial game state
+    database.ref("/gameState").set({gameState: "need-players"});
+}
+
+function setUpPlayer(playerId){
+    //decide which player area to edit
+    var playerArea;
+    if (playerId === "p1"){
+        playerArea = $("#player1-body");
+    } else if (playerId === "p2") {
+        playerArea = $("#player2-body");
+    };
+    //fill in the selections
+    var rock = $("<h2 class='game-choice'>Rock</h2>");
+    rock.attr("data-name", "rock");
+    playerArea.append(rock);
+    var paper = $("<h2 class='game-choice'>Paper</h2>");
+    paper.attr("data-name", "paper");
+    playerArea.append(paper);
+    var scissors = $("<h2 class='game-choice'>scissors</h2>");
+    scissors.attr("data-name", "scissors");
+    playerArea.append(scissors);
+    //add on.click functions? or do that outside
+}
+
+function startNextRound(){
+    //clear out game update text
+    $("#game-update").text("");
+    //reset player choice area
+    $("#player1-body").empty();
+    $("#player2-body").empty();
+    //fill in player choice area
+    setUpPlayer(playerId);
+    //reset game state
+    database.ref("/gameState").set({gameState: "p1"});
+}
 
 // When the client's connection state changes...
 database.ref(".info/connected").on("value", function(snap) {
@@ -52,12 +89,16 @@ database.ref("/gameState").on("value", function(snap) {
     console.log("GS: " + state);
     if (state === "need-players"){
         //highlight the middle box
+        $("#game-update").text("Waiting for all players to join.")
     } else if (state === "p1") {
         //highlight player 1
+        $("#game-update").text(player1name + "'s turn.")
     } else if (state === "p2") {
         //highlight player 2
+        $("#game-update").text(player2name + "'s turn.")
     } else if (state === "show-result") {
         //highlight the middle box
+
     };
     //display the game state
     $("#game-state").text(state);
@@ -77,6 +118,8 @@ database.ref("/players").on("child_added", function(playerSnap){
         //display the player's name and record
         $("#player1-header").html("<p>" + playerSnap.val().playerName + "</p>");
         $("#player1-footer").html("<p>Wins: " + playerSnap.val().wins + ", Losses: " + playerSnap.val().losses + "</p>")
+        //store the player's name locally
+        player1name = playerSnap.val().playerName;
     };
 
     if (playerSnap.getKey() === "p2"){
@@ -86,6 +129,8 @@ database.ref("/players").on("child_added", function(playerSnap){
        //display the player's name and record
         $("#player2-header").html("<p>" + playerSnap.val().playerName + "</p>")
         $("#player2-footer").html("<p>Wins: " + playerSnap.val().wins + ", Losses: " + playerSnap.val().losses + "</p>")
+        //store the player's name locally
+        player2name = playerSnap.val().playerName;
     }; 
 
     //if 2 players are logged in, hide the ability to log in. also, udpate state.
@@ -107,6 +152,8 @@ database.ref("/players").on("child_removed", function(playerSnap){
         $("#player1-footer").html("<p></p>")
         //update the local variable for tracking whether p1 exists
         player1exists = false;
+        //clear the player's name locally
+        player1name = "";
     };
     //if p2 disconnected, reset player 2's play area
     if (playerSnap.getKey() === "p2"){
@@ -115,6 +162,8 @@ database.ref("/players").on("child_removed", function(playerSnap){
         $("#player2-footer").html("<p></p>")
         //update local tracking variable
         player2exists = false;
+        //clear the player's name locally
+        player2name = "";
     }; 
     
     //as long as you are not already connected..show the login form
@@ -145,52 +194,43 @@ database.ref("/players").on("value", function(playersSnap) {   //note: this bloc
                 if (p2choice === "scissors"){
                     database.ref("/players/p1/wins").set(playersSnap.val().p1.wins + 1);
                     database.ref("/players/p2/losses").set(playersSnap.val().p2.losses + 1);
-                    result = "Player 1 Wins";
+                    result = player1name + "Wins!";
                 } else if (p2choice === "paper"){
                     database.ref("/players/p1/losses").set(playersSnap.val().p1.losses + 1);
                     database.ref("/players/p2/wins").set(playersSnap.val().p2.wins + 1);
-                    result = "Player 2 Wins";
+                    result = player2name + "Wins!";
                 };
             } else if (p1choice === "paper"){
                 if (p2choice === "rock"){
                     database.ref("/players/p1/wins").set(playersSnap.val().p1.wins + 1);
                     database.ref("/players/p2/losses").set(playersSnap.val().p2.losses + 1);
-                    result = "Player 1 Wins";
+                    result = player1name + "Wins!";
                 } else if (p2choice === "scissors"){
                     database.ref("/players/p1/losses").set(playersSnap.val().p1.losses + 1);
                     database.ref("/players/p2/wins").set(playersSnap.val().p2.wins + 1);
-                    result = "Player 2 Wins";
+                    result = player2name + "Wins!";
                 };
             } else if (p1choice === "scissors"){
                 if (p2choice === "paper"){
                     database.ref("/players/p1/wins").set(playersSnap.val().p1.wins + 1);
                     database.ref("/players/p2/losses").set(playersSnap.val().p2.losses + 1);
-                    result = "Player 1 Wins";
+                    result = player1name + "Wins!";
                 } else if (p2choice === "rock"){
                     database.ref("/players/p1/losses").set(playersSnap.val().p1.losses + 1);
                     database.ref("/players/p2/wins").set(playersSnap.val().p2.wins + 1);
-                    result = "Player 2 Wins";
+                    result = player2name + "Wins!";
                 };
             };
             //display result locally
             $("#game-update").text(result)
             //set a timer to execute the "nextRound" function 
-
+            setTimeout(startNextRound, 3000)
         };
     };
 
 }, function(errorObject){
 	alert("firebase encountered an error");
 });
-
-database.ref("/players").once("value", function(playersSnap){
-    console.log("value change in '/players' (once)");
-    
-
-});
-
-
-
 
 //on initial load, get a snapshot.  also if any values change, get a snapshot.
 database.ref("/chatLog").on("child_added", function(childSnapshot){
@@ -291,46 +331,6 @@ $("#chat-form-btn").on("click", function(){
     //return false so it doesnt reload page
     return false;
 });
-
-//this function will clear out the contents of the gameplay section for a new game
-function setUpGame(){
-    //fill in starter info
-    $("#player1-header").html("<h3>Waiting for Player 1</h3>");
-    $("#game-update").html("<h2>Waiting for players to log in</h2>");
-    $("#player2-header").html("<h3>Waiting for Player 2</h3>");
-    //set initial game state
-    database.ref("/gameState").set({gameState: "need-players"});
-}
-
-function setUpPlayer(playerId){
-    //decide which player area to edit
-    var playerArea;
-    if (playerId === "p1"){
-        playerArea = $("#player1-body");
-    } else if (playerId === "p2") {
-        playerArea = $("#player2-body");
-    };
-    //clear out contents of the area where the selections will go
-    playerArea.empty();
-    //fill in the selections
-    var rock = $("<h2 class='game-choice'>Rock</h2>");
-    rock.attr("data-name", "rock");
-    playerArea.append(rock);
-    var paper = $("<h2 class='game-choice'>Paper</h2>");
-    paper.attr("data-name", "paper");
-    playerArea.append(paper);
-    var scissors = $("<h2 class='game-choice'>scissors</h2>");
-    scissors.attr("data-name", "scissors");
-    playerArea.append(scissors);
-    //add on.click functions? or do that outside
-}
-
-//this function will reset part of the game if a player disconnects
-function playerDisconnected(playerId){
-    //clear out that player's field
-
-}
-
 
 //run game
 setUpGame();
