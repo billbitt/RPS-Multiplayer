@@ -191,6 +191,10 @@ database.ref("/players").on("value", function(playersSnap) {   //note: this bloc
             //get the choices of p1 and p2
             var p1choice = playersSnap.val().p1.choice;
             var p2choice = playersSnap.val().p2.choice;
+            var p1wins = playersSnap.val().p1.wins;
+            var p1losses = playersSnap.val().p1.losses;
+            var p2wins = playersSnap.val().p2.wins;
+            var p2losses = playersSnap.val().p2.losses;
             //reset their choices so this wont run again.
             database.ref("/players/p1/choice").set("none");
             database.ref("/players/p2/choice").set("none");
@@ -198,40 +202,45 @@ database.ref("/players").on("value", function(playersSnap) {   //note: this bloc
             var result = "Tie";
             if (p1choice === "rock"){
                 if (p2choice === "scissors"){
-                    database.ref("/players/p1/wins").set(playersSnap.val().p1.wins + 1);
-                    database.ref("/players/p2/losses").set(playersSnap.val().p2.losses + 1);
+                    p1wins += 1;
+                    p2losses += 1;
                     result = player1name + "Wins!";
                 } else if (p2choice === "paper"){
-                    database.ref("/players/p1/losses").set(playersSnap.val().p1.losses + 1);
-                    database.ref("/players/p2/wins").set(playersSnap.val().p2.wins + 1);
+                    p1losses += 1;
+                    p2wins += 1;
                     result = player2name + " Wins!";
                 };
             } else if (p1choice === "paper"){
                 if (p2choice === "rock"){
-                    database.ref("/players/p1/wins").set(playersSnap.val().p1.wins + 1);
-                    database.ref("/players/p2/losses").set(playersSnap.val().p2.losses + 1);
+                    p1wins += 1;
+                    p2losses += 1;
                     result = player1name + " Wins!";
                 } else if (p2choice === "scissors"){
-                    database.ref("/players/p1/losses").set(playersSnap.val().p1.losses + 1);
-                    database.ref("/players/p2/wins").set(playersSnap.val().p2.wins + 1);
+                    p1losses += 1;
+                    p2wins += 1;
                     result = player2name + " Wins!";
                 };
             } else if (p1choice === "scissors"){
                 if (p2choice === "paper"){
-                    database.ref("/players/p1/wins").set(playersSnap.val().p1.wins + 1);
-                    database.ref("/players/p2/losses").set(playersSnap.val().p2.losses + 1);
+                    p1wins += 1;
+                    p2losses += 1;
                     result = player1name + " Wins!";
                 } else if (p2choice === "rock"){
-                    database.ref("/players/p1/losses").set(playersSnap.val().p1.losses + 1);
-                    database.ref("/players/p2/wins").set(playersSnap.val().p2.wins + 1);
+                    p1losses += 1;
+                    p2wins += 1;
                     result = player2name + " Wins!";
                 };
             };
             //display result locally
             $("#game-update").text(result);
             //update the display of the wins and losses
-            $("#player1-footer").text("TEST Wins: " + parseInt(playersSnap.val().p1.wins) + ", Losses: " + playersSnap.val().p1.losses);
-            $("#player2-footer").text("TEST Wins: " + playersSnap.val().p2.wins + ", Losses: " + playersSnap.val().p2.losses);
+            $("#player1-footer").text("Wins: " + p1wins + ", Losses: " + p1losses);
+            $("#player2-footer").text("Wins: " + p2wins + ", Losses: " + p2losses);
+            //update database
+            database.ref("/players/p1/wins").set(p1wins);
+            database.ref("/players/p1/losses").set(p1losses);
+            database.ref("/players/p2/wins").set(p2wins);
+            database.ref("/players/p2/losses").set(p2losses);
             //set a timer to execute the "nextRound" function 
             setTimeout(startNextRound, 3000);
             

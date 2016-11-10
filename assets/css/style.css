@@ -36,7 +36,7 @@ header {
 
 #game-update {
     text-align: center;
-    margin: 0px 15px 0px 15px;
+    margin: 50px 15px 0px 15px;
 }
 
 #player2-section {
@@ -48,6 +48,10 @@ header {
     position: absolute;
     bottom: 0px;
     left: 30%;
+}
+
+.game-choice {
+    color: green;
 }
 
 .game-choice:hover {
