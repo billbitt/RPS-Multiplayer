@@ -8,7 +8,7 @@ header {
     text-align: center;
     text-shadow: 2px 2px 2px dimgray;
     box-shadow: 2px 2px 2px dimgrey;
-    padding: 20px 10px 20px 10px;
+    padding: 10px 10px 10px 10px;
 }
 
 .login-section, .gameplay-section, .chat-section {
@@ -18,9 +18,10 @@ header {
 
 .gameplay-component {
     width: 25%;
-    height: 300px;
+    height: 250px;
     border: 2px solid dodgerblue;
     box-shadow: 2px 2px 2px dimgrey;
+    background: white;
     position: relative;
 }
 
@@ -44,6 +45,15 @@ header {
     margin: 0px 0px 0px 15px;
 }
 
+#player1-header, #player2-header {
+    color: grey;
+}
+
+#player1-body, #player2-body {
+    margin: 20px 0px 30px 0px;
+}
+
+
 #player1-footer, #player2-footer {
     position: absolute;
     bottom: 0px;
@@ -51,7 +61,7 @@ header {
 }
 
 .game-choice {
-    color: green;
+    
 }
 
 .game-choice:hover {
@@ -75,7 +85,7 @@ header {
 }
 
 .chat-text {
-    font-size: x-small;
+    font-size: small;
     line-height: 1;
     vertical-align: bottom;
 }

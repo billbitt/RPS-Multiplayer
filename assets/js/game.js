@@ -9,7 +9,7 @@ var playerId;
 var numberOfPlayers = 0;
 //create game variables
 var state;
-var playerChoice; //note: am i using this?
+var playerChoice; 
 var player1exists = false;
 var player2exists = false;
 var player1name;
@@ -21,7 +21,6 @@ var player2name;
 function setUpGame(){
     //fill in starter info
     $("#player1-header").html("<h3>Waiting for Player 1</h3>");
-    $("#game-update").html("<h2>Waiting for players to log in</h2>");
     $("#player2-header").html("<h3>Waiting for Player 2</h3>");
     //clear the player choice areas
     $("#player1-body").empty();
@@ -38,6 +37,9 @@ function setUpPlayer(playerId){
     } else if (playerId === "p2") {
         playerArea = $("#player2-body");
     };
+    //empty the player area, in case we reset mid game
+    $("#player1-body").empty();
+    $("#player2-body").empty()
     //fill in the selections
     var rock = $("<h2 class='game-choice'>Rock</h2>");
     rock.attr("data-name", "rock");
@@ -45,7 +47,7 @@ function setUpPlayer(playerId){
     var paper = $("<h2 class='game-choice'>Paper</h2>");
     paper.attr("data-name", "paper");
     playerArea.append(paper);
-    var scissors = $("<h2 class='game-choice'>scissors</h2>");
+    var scissors = $("<h2 class='game-choice'>Scissors</h2>");
     scissors.attr("data-name", "scissors");
     playerArea.append(scissors);
     //add on.click functions? or do that outside
@@ -75,27 +77,18 @@ database.ref(".info/connected").on("value", function(snap) {
 	alert("firebase encountered an error");
 });
 
-// When first loaded or when the connections list changes...
-database.ref("/connections").on("value", function(snap) {
-	// Display the viewer count in the html. The number of online users is the number of children in the connections list.
-    console.log("number of connections: " + snap.numChildren());
-	$("#connected-viewers").text(snap.numChildren());
-}, function(errorObject){
-	alert("firebase encountered an error");
-});
-
+//when the value of the gamestate changes, update the display for the players
 database.ref("/gameState").on("value", function(snap) {
     state = snap.val().gameState;
-    console.log("GS: " + state);
     if (state === "need-players"){
-        $("#game-update").text("Waiting for all players to join.")
+        $("#game-update").text("Waiting for all players to join")
     } else if (state === "p1") {
-        $("#game-update").text(player1name + "'s turn.")
+        $("#game-update").text(player1name + "'s turn")
         //highlight player 1
         $("#game-status").removeClass("highlight");
         $("#player1-section").addClass("highlight");
     } else if (state === "p2") {
-        $("#game-update").text(player2name + "'s turn.")
+        $("#game-update").text(player2name + "'s turn")
         //highlight player 2
         $("#player1-section").removeClass("highlight");
         $("#player2-section").addClass("highlight");
@@ -111,12 +104,9 @@ database.ref("/gameState").on("value", function(snap) {
 
 //if any player connects we need to set up all the common information that all computers will see
 database.ref("/players").on("child_added", function(playerSnap){
-    console.log("child added to /players");
     //update the display of players' names, when they are added
     if (playerSnap.getKey() === "p1"){
-        console.log("child key is p1");
         player1exists = true;
-        console.log("player1exists: " + player1exists)
         //display the player's name and record
         $("#player1-header").html("<h3>" + playerSnap.val().playerName + "</h3>");
         $("#player1-footer").html("<p>Wins: " + playerSnap.val().wins + ", Losses: " + playerSnap.val().losses + "</p>")
@@ -125,9 +115,7 @@ database.ref("/players").on("child_added", function(playerSnap){
     };
 
     if (playerSnap.getKey() === "p2"){
-        console.log("child key is p2");
         player2exists = true;
-        console.log("player2exists: " + player2exists)
        //display the player's name and record
         $("#player2-header").html("<h3>" + playerSnap.val().playerName + "</h3>")
         $("#player2-footer").html("<p>Wins: " + playerSnap.val().wins + ", Losses: " + playerSnap.val().losses + "</p>")
@@ -148,9 +136,8 @@ database.ref("/players").on("child_added", function(playerSnap){
 database.ref("/players").on("child_removed", function(playerSnap){
     //if p1 disconnected, reset player 1's play area`
     if (playerSnap.getKey() === "p1"){
-        console.log("p1 was removed");
         //reset area
-        $("#player1-header").html("<p>Waiting for player 1</p>");
+        $("#player1-header").html("<h3>Waiting for player 1</h3>");
         $("#player1-footer").html("<p></p>")
         //update the local variable for tracking whether p1 exists
         player1exists = false;
@@ -159,8 +146,7 @@ database.ref("/players").on("child_removed", function(playerSnap){
     };
     //if p2 disconnected, reset player 2's play area
     if (playerSnap.getKey() === "p2"){
-        console.log("p2 was removed");
-        $("#player2-header").html("<p>Waiting for Player 2</p>")
+        $("#player2-header").html("<h3>Waiting for Player 2</h3>")
         $("#player2-footer").html("<p></p>")
         //update local tracking variable
         player2exists = false;
@@ -174,17 +160,16 @@ database.ref("/players").on("child_removed", function(playerSnap){
         $("#login-form").show();
         //empty welcome banner
         $("#welcome-banner").empty();
-        //change game state
-        database.ref("/gameState").update({gameState: "need-players"});
     };
-    
+    //change game state
+    database.ref("/gameState").update({gameState: "need-players"});
+    //reset yourself
+    setUpPlayer(playerId);
 });
 
 
-database.ref("/players").on("value", function(playersSnap) {   //note: this block used to be on.child_added? 
-    console.log("value change in '/players'");
-
-    //if both player's exist, check for choices and run game'  //note: i am getting stuck in an infinite loop here b/c it updates the player then that triggers another go.  need to update after resetting choices.
+database.ref("/players").on("value", function(playersSnap) {    
+    //if both player's exist, check for choices and run game' 
     if ((player1exists === true) && (player2exists === true)){
         //if both players have made a choice, carry out the game logic
         if ((playersSnap.val().p1.choice != "none") && (playersSnap.val().p2.choice != "none")){
@@ -204,31 +189,31 @@ database.ref("/players").on("value", function(playersSnap) {   //note: this bloc
                 if (p2choice === "scissors"){
                     p1wins += 1;
                     p2losses += 1;
-                    result = player1name + "Wins!";
+                    result = player1name + " wins!";
                 } else if (p2choice === "paper"){
                     p1losses += 1;
                     p2wins += 1;
-                    result = player2name + " Wins!";
+                    result = player2name + " wins!";
                 };
             } else if (p1choice === "paper"){
                 if (p2choice === "rock"){
                     p1wins += 1;
                     p2losses += 1;
-                    result = player1name + " Wins!";
+                    result = player1name + " wins!";
                 } else if (p2choice === "scissors"){
                     p1losses += 1;
                     p2wins += 1;
-                    result = player2name + " Wins!";
+                    result = player2name + " wins!";
                 };
             } else if (p1choice === "scissors"){
                 if (p2choice === "paper"){
                     p1wins += 1;
                     p2losses += 1;
-                    result = player1name + " Wins!";
+                    result = player1name + " wins!";
                 } else if (p2choice === "rock"){
                     p1losses += 1;
                     p2wins += 1;
-                    result = player2name + " Wins!";
+                    result = player2name + " wins!";
                 };
             };
             //display result locally
@@ -253,8 +238,6 @@ database.ref("/players").on("value", function(playersSnap) {   //note: this bloc
 
 //on initial load, get a snapshot.  also if any values change, get a snapshot.
 database.ref("/chatLog").on("child_added", function(childSnapshot){
-	// Console.log the initial "snapshot" value (the object itself)
-    console.log("message added to chat log");
     //update the chat window by adding the latest chat
     var latestMessage = $("<p>");
     latestMessage.addClass("chat-text");
@@ -268,46 +251,45 @@ database.ref("/chatLog").on("child_added", function(childSnapshot){
 });
 
 
-//functionality when player clicks the login button
+//functionality when player joins the game
 $("#login-form-btn").on("click", function(){
-    //update the number of players
-    numberOfPlayers += 1;
-    //create the player's player id
-    //figure out if you are player 1 or player 2.
-    if(player1exists === false){  //NOTE: snap doesnt work here in this function so using the variables updated above in the listener
-        //then this player is player 1
-        playerId = "p1";
-    //otherwise if p1 does exist
-    } else {
-        //then this player is player 2
-        playerId = "p2";
-    };
+    //wrap functionality in an if statement so player's cant submit a blank name
+    if ($("#login-form-name").val().trim() != ""){
+        //update the number of players
+        numberOfPlayers += 1;
+        //figure out if you are player 1 or player 2
+        if(player1exists === false){
+            //then this player is player 1
+            playerId = "p1";
+        //otherwise if p1 does exist
+        } else {
+            //then this player is player 2
+            playerId = "p2";
+        };
 
-    //store the name locally
-    playerName = $("#login-form-name").val().trim()
-    //set the top banner
-    $("#welcome-banner").html("<h3>Welcome " + playerName + "!</h3>");
-    //create the player object  //NOTE: would be cool to pull history from cookies if they have logged in before.
-    var newPlayerData = {
-        losses: 0,
-        playerName: playerName,
-        choice: "none",
-        wins: 0
+        //store the name locally
+        playerName = $("#login-form-name").val().trim()
+        //set the top banner
+        $("#welcome-banner").html("<h3>Welcome " + playerName + "!</h3>");
+        //create the player object 
+        var newPlayerData = {
+            losses: 0,
+            playerName: playerName,
+            choice: "none",
+            wins: 0
+        };
+        //set the player data and store the key in playerKey
+        database.ref("/players/" + playerId).set(newPlayerData);
+        //store the player's ref'
+        playerRef = database.ref("/players/" + playerId);
+        //set a disconnect function for the player you just added so it will remove itself when (NEW 6:20pm)
+        playerRef.onDisconnect().remove();
+        //hide the login form because this player has already logged in
+        $("#login-form").hide();
+        //display
+        setUpPlayer(playerId);
+        //return false so it doesnt reload page
     };
-    //set the player data and store the key in playerKey
-    database.ref("/players/" + playerId).set(newPlayerData);
-    //store the player's ref'
-    playerRef = database.ref("/players/" + playerId);
-    //conole logs for test
-    console.log("player ref: " + playerRef);
-    console.log("player id: " + playerId);
-    //set a disconnect function for the player you just added so it will remove itself when (NEW 6:20pm)
-    playerRef.onDisconnect().remove();
-    //hide the login form because this player has already logged in
-    $("#login-form").hide();
-    //display
-    setUpPlayer(playerId);
-    //return false so it doesnt reload page
     return false;
 });
 
@@ -317,7 +299,6 @@ $(document).on("click", ".game-choice", function(){
     if ( state === playerId){
         //grab the name of the clicked element and save it in the player's choice variable
         playerChoice = $(this).attr("data-name");
-        console.log("player's choice: " + playerChoice);
         //update the server with the player's choices
         playerRef.update({choice: playerChoice});
         //create a display of the selections
@@ -327,7 +308,6 @@ $(document).on("click", ".game-choice", function(){
         $(this).after(choiceDisplay);
         //remove all choices
         $(".game-choice").remove();
-        
         //switch the game state
         if (state === "p1"){
             database.ref("/gameState").set({gameState: "p2"});

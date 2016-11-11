@@ -24,7 +24,7 @@
             <div id="player1-footer"></div>
         </div>
         <div class="gameplay-component" id="game-status">
-            <h3>Game Play-By-Play:</h3>
+            <h3>Game Instructions:</h3>
             <h2 id="game-update"></h2>
         </div>
         <div class="gameplay-component" id="player2-section">
@@ -42,10 +42,6 @@
         </form>
     </div>
 
-    <p>Number of connected users:</p>
-    <p id="connected-viewers"></p>
-
-
     <script src="https://www.gstatic.com/firebasejs/3.5.3/firebase.js"></script>
     <script>
         // Initialize Firebase
@@ -58,9 +54,7 @@
         };
         firebase.initializeApp(config);
     </script>
-
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-
     <script type="text/javascript" src="assets/js/game.js"></script>
 
 </body>
