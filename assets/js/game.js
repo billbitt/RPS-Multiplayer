@@ -30,6 +30,9 @@ function setUpGame(){
 }
 
 function setUpPlayer(playerId){
+    //empty the player area, in case we reset mid game
+    $("#player1-body").empty();
+    $("#player2-body").empty()
     //decide which player area to edit
     var playerArea;
     if (playerId === "p1"){
@@ -37,9 +40,6 @@ function setUpPlayer(playerId){
     } else if (playerId === "p2") {
         playerArea = $("#player2-body");
     };
-    //empty the player area, in case we reset mid game
-    $("#player1-body").empty();
-    $("#player2-body").empty()
     //fill in the selections
     var rock = $("<h2 class='game-choice'>Rock</h2>");
     rock.attr("data-name", "rock");
