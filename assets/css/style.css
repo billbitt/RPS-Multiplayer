@@ -60,10 +60,6 @@ header {
     left: 30%;
 }
 
-.game-choice {
-    
-}
-
 .game-choice:hover {
     color: grey;
 }
